@@ -14,8 +14,7 @@ for classifier in baseline_classifiers.keys():
         baseline_trainer(
             processed_df=df,
             algorithm=baseline_classifiers[classifier],
-            cf='coefficients',
-            threshold_plot=True
+            cf='coefficients'
         )
     )
     break

@@ -6,10 +6,9 @@ from constants import (PLOTLY_TEMPLATE, PANDAS_TEMPLATE)
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix, accuracy_score, classification_report
 from sklearn.metrics import roc_auc_score, roc_curve
-from yellowbrick.classifier import DiscriminationThreshold
 
 
-def baseline_trainer(processed_df, algorithm, cf, threshold_plot):
+def baseline_trainer(processed_df, algorithm, cf):
     logger = logging.getLogger(__name__)
     id_col = ['customerID']
     target_col = ["Churn"]
@@ -44,16 +43,18 @@ def baseline_trainer(processed_df, algorithm, cf, threshold_plot):
     print(f"Accuracy Score : {accuracy_score(test_Y, predictions)}\n")
 
     conf_matrix = confusion_matrix(test_Y, predictions)
+    print(f'Confusion Matrix:\n{conf_matrix}')
     model_roc_auc = roc_auc_score(test_Y, predictions)
-    print("Area under curve : ", model_roc_auc, "\n")
+    print(f"Area under curve :\n{model_roc_auc} \n")
     fpr, tpr, thresholds = roc_curve(test_Y, probabilities[:, 1])
 
     logger.info('Producing Evaluation Report')
 
     trace1 = go.Heatmap(z=conf_matrix,
-                        x=["Not churn", "Churn"],
-                        y=["Not churn", "Churn"],
-                        showscale=False, colorscale="Picnic",
+                        x=["Not Churn", "Churn"],
+                        y=["Not Churn", "Churn"],
+                        showscale=False,
+                        colorscale="Picnic",
                         name="matrix")
 
     # plot roc curve
@@ -94,7 +95,5 @@ def baseline_trainer(processed_df, algorithm, cf, threshold_plot):
     fig.layout['hovermode'] = 'x'
     fig.show()
 
-    if threshold_plot == True:
-        visualizer = DiscriminationThreshold(algorithm)
-        visualizer.fit(train_X, train_Y)
-        visualizer.show()
+
+    return algorithm

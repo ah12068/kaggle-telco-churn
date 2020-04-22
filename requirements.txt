@@ -18,5 +18,5 @@ imbalanced-learn
 plotly
 seaborn
 matplotlib
-
+yellowbrick
 

@@ -1,11 +1,11 @@
 import logging
 import pandas as pd
 import plotly.graph_objs as go
-import plotly.tools as tls
+from plotly.subplots import make_subplots
 from constants import (PLOTLY_TEMPLATE, PANDAS_TEMPLATE)
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix, accuracy_score, classification_report
-from sklearn.metrics import roc_auc_score, roc_curve, scorer
+from sklearn.metrics import roc_auc_score, roc_curve
 from yellowbrick.classifier import DiscriminationThreshold
 
 
@@ -72,10 +72,10 @@ def baseline_trainer(processed_df, algorithm, cf, threshold_plot):
                                 line=dict(width=.6, color="black")))
 
     # subplots
-    fig = tls.make_subplots(rows=2, cols=2, specs=[[{}, {}], [{'colspan': 2}, None]],
-                            subplot_titles=('Confusion Matrix',
-                                            'Receiver operating characteristic',
-                                            'Feature Importances'))
+    fig = make_subplots(rows=2, cols=2, specs=[[{}, {}], [{'colspan': 2}, None]],
+                        subplot_titles=('Confusion Matrix',
+                                        'Receiver operating characteristic',
+                                        'Feature Importances'))
 
     fig.append_trace(trace1, 1, 1)
     fig.append_trace(trace2, 1, 2)
@@ -91,7 +91,8 @@ def baseline_trainer(processed_df, algorithm, cf, threshold_plot):
     fig["layout"]["yaxis2"].update(dict(title="true positive rate"))
     fig["layout"]["xaxis3"].update(dict(showgrid=True, tickfont=dict(size=10),
                                         tickangle=90))
-    py.iplot(fig)
+    fig.layout['hovermode'] = 'x'
+    fig.show()
 
     if threshold_plot == True:
         visualizer = DiscriminationThreshold(algorithm)

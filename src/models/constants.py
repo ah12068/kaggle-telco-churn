@@ -5,7 +5,7 @@ import pandas as pd
 import plotly.io as pio
 
 PLOTLY_TEMPLATE = pio.templates.default = 'plotly_white'
-PANDAS_TEMPLATe = pd.set_option('display.float_format', '{:.5f}'.format)
+PANDAS_TEMPLATE = pd.set_option('display.float_format', '{:.5f}'.format)
 
 random_seed = 1
 best_model_file_name = 'final_model.pkl'

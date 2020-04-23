@@ -8,7 +8,7 @@ from sklearn.metrics import confusion_matrix, accuracy_score, classification_rep
 from sklearn.metrics import roc_auc_score, roc_curve
 
 
-def baseline_trainer(processed_df, algorithm, cf):
+def baseline_trainer(processed_df, algorithm, cf, name=None):
     logger = logging.getLogger(__name__)
     id_col = ['customerID']
     target_col = ["Churn"]
@@ -38,7 +38,6 @@ def baseline_trainer(processed_df, algorithm, cf):
     coef_sumry.columns = ["coefficients", "features"]
     coef_sumry = coef_sumry.sort_values(by="coefficients", ascending=False)
 
-    print(algorithm)
     print(f"\n Classification report : \n, {classification_report(test_Y, predictions)}")
     print(f"Accuracy Score : {accuracy_score(test_Y, predictions)}\n")
 
@@ -47,6 +46,18 @@ def baseline_trainer(processed_df, algorithm, cf):
     model_roc_auc = roc_auc_score(test_Y, predictions)
     print(f"Area under curve :\n{model_roc_auc} \n")
     fpr, tpr, thresholds = roc_curve(test_Y, probabilities[:, 1])
+
+    metrics = f'''
+    Classification Report:\n{classification_report(test_Y, predictions)}\n,
+    AUC Score: {model_roc_auc}\n,
+    Confusion Matrix:\n{conf_matrix}\n
+            '''
+
+
+
+    f = open(f'../../models/baseline_{name}_metrics.txt','w')
+    f.write(metrics)
+    f.close()
 
     logger.info('Producing Evaluation Report')
 
@@ -83,7 +94,7 @@ def baseline_trainer(processed_df, algorithm, cf):
     fig.append_trace(trace3, 1, 2)
     fig.append_trace(trace4, 2, 1)
 
-    fig['layout'].update(showlegend=False, title="Model performance",
+    fig['layout'].update(showlegend=False, title=f"{name} performance",
                          autosize=False, height=900, width=800,
                          plot_bgcolor='rgba(240,240,240, 0.95)',
                          paper_bgcolor='rgba(240,240,240, 0.95)',
@@ -97,3 +108,20 @@ def baseline_trainer(processed_df, algorithm, cf):
 
 
     return algorithm
+
+def create_report(algorithm, test_X, test_Y):
+
+    predictions = algorithm.predict(test_X)
+    probabilities = algorithm.predict_proba(test_X)
+
+    model_roc_auc = roc_auc_score(test_Y, predictions)
+
+    metrics = f'''
+        Classification Report:\n{classification_report(test_Y, predictions)}\n,
+        Accuracy Score : {accuracy_score(test_Y, predictions)}\n"
+        AUC Score: {model_roc_auc}\n,
+        Confusion Matrix:\n{confusion_matrix(test_Y, predictions)}\n
+                '''
+
+
+    return metrics

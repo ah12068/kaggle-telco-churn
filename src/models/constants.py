@@ -1,6 +1,8 @@
 from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.svm import SVC
+from numpy import logspace
 import pandas as pd
 import plotly.io as pio
 
@@ -12,14 +14,17 @@ best_model_file_name = 'final_model.pkl'
 
 baseline_classifiers = {
     "LogisticRegression": LogisticRegression(random_state=random_seed),
-    "KNearest": KNeighborsClassifier(),
+    "SVM": SVC(probability=True, kernel='linear'),
     "DecisionTreeClassifier": DecisionTreeClassifier(random_state=random_seed)
 }
 
-LogisiticRegression_grid = {
-    "classification__penalty": ['l2'],
-    "classification__C": [0.001, 0.01, 0.1, 1],
-    "classification__solver": ['lbfgs']
+feature_coefs = [
+    "DecisionTreeClassifier",
+]
+
+LogisticRegression_grid = {
+    "penalty": ['l2'],
+    "C": logspace(0, 4, 10)
 }
 
 LogisticRegression_rndm_params = {

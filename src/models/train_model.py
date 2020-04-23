@@ -2,7 +2,7 @@ import pandas as pd
 import warnings
 import logging
 from constants import LogisticRegression_grid
-from functions import create_report
+from functions import create_report, plot_report
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.linear_model import LogisticRegression
 import joblib
@@ -10,9 +10,9 @@ from imblearn.over_sampling import SMOTENC
 
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
+
 def main():
     logger = logging.getLogger(__name__)
-
 
     processed_df = pd.read_csv(f'../../data/processed/processed.csv')
 
@@ -60,7 +60,21 @@ def main():
     joblib.dump(best_model, f'../../models/logsticreg_best.pkl', compress=9)
     logger.info(f'Model and Evaluation saved to "models/"')
 
+    logger.info('Visualising metrics')
+
+    plot_report(
+        processed_df=processed_df,
+        algorithm=best_model.best_estimator_,
+        test_X=smote_test_X,
+        test_Y=smote_test_Y,
+        cf='coefficients',
+        name='Logistic Regression'
+    )
+
+    logger.info('DOWNLOAD PLOT FROM PLOTLY')
+
     return
+
 
 if __name__ == '__main__':
     log_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
